@@ -1,5 +1,6 @@
-FROM ubuntu:bionic
+FROM gitpod/workspace-full-vnc
 
+USER root
 # installing firefox
 RUN apt-get update && apt install -y firefox 
 
@@ -32,12 +33,3 @@ RUN pip3 install scrapy-selenium
 RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
 RUN tar -zxf geckodriver-v0.26.0-linux64.tar.gz -C /usr/bin
 RUN geckodriver --version
-
-# geckodrivers
-# COPY geckodriver /usr/local/bin
-# RUN chmod +x /usr/local/bin/geckodriver
-# CMD [ "python3", "sleeping.py"]
-
-#CMD ["curl" ,"https://www.youtube.com/"]
-#scrapy", "crawl", "youtubecrawller" raper
-CMD ["scrapy", "crawl", "linkwalkerv3"]
