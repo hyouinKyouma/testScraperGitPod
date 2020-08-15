@@ -37,8 +37,7 @@ NEWSPIDER_MODULE = 'swiggy.spiders'
 #    'swiggy.pipelines.SwiggyPipeline': 100,
 #     # 'scrapy.pipelines.files.S3FilesStore': 1
 # }
-# # S3PIPELINE_URL = 's3://jan11-swiggy-test/'
-# # arn:aws:s3:::jan11-swiggy-test
+
 
 # Disable cookies (enabled by default)
 #COOKIES_ENABLED = False
@@ -158,7 +157,7 @@ from shutil import which
 
 SELENIUM_DRIVER_NAME = 'firefox'
 SELENIUM_DRIVER_EXECUTABLE_PATH = which('geckodriver')
-SELENIUM_DRIVER_ARGUMENTS=['-private','-headless']  # '--headless' if using chrome instead of firefox
+SELENIUM_DRIVER_ARGUMENTS=['-private',]  # '--headless' if using chrome instead of firefox
 
 DOWNLOADER_MIDDLEWARES = {
     # 'scrapy.contrib.spidermiddleware.referer.RefererMiddleware': True,

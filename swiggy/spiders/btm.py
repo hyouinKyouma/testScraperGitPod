@@ -7,7 +7,7 @@ class BtmSpider(scrapy.Spider):
     #allowed_domains = ['www.zomato.com']
     start_urls = ["https://www.swiggy.com/bangalore/btm-restaurants"]
     custom_settings = {
-        'FEED_FORMAT': 'csv',
+        'FEEDS': 'csv',
         'FEED_URI': 'btm.csv'
     }
     def __init__(self):

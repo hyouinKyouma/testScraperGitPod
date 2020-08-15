@@ -17,10 +17,21 @@ class Linkwalkerv3Spider(scrapy.Spider):
 # os.environ(opfile)
     user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
     # user_agent = "Mozilla/5.0 (X11; Linux i686; rv:79.0) Gecko/20100101 Firefox/79.0"
-    custom_settings = {
-        'FEED_FORMAT':'csv',
-        'FEED_URI':'s3://linkwalker-op/%s'%(os.getenv('OP_FILE'))
-    }
+    # custom_settings = {
+    #     'FEED_FORMAT':'csv',
+    #     'FEED_URI':'s3://linkwalker-op/%s'%(os.getenv('OP_FILE'))
+    # }
+    # custom_settings = {
+    #     'FEED_FORMAT': 'csv',
+    #     'FEED_URI': 'banaswadi.csv'
+    # }
+    
+    # custom_settings = {
+    #     pathlib.Path('items.csv'): {
+    #     'format': 'csv'
+    #     # 'fields': ['price', 'name'],
+    # }
+    # }
     # UTILITY FUNCTIONS--------------->>>
     # For extracting values based on the xpath
     def xptahExtractor(self,response,x_path):
@@ -70,7 +81,7 @@ class Linkwalkerv3Spider(scrapy.Spider):
         obj = s3c.get_object(Bucket=input_bucket,Key =input_file)
         df = pd.read_csv(io.BytesIO(obj['Body'].read()), encoding='utf8',header=None)
         return df 
-
+    
     def start_requests(self):
         urls = self.urls
         print("--------------------------------->URLS",urls)
@@ -84,11 +95,12 @@ class Linkwalkerv3Spider(scrapy.Spider):
             )
 
     def __init__(self):
-        self.df = self.readCsvFromS3('AKIAIJ4PRNXZHJWOXQFA',
-                                    'gV/RxdNoXK81jI58KSHZDRTn8sjorVIFb6+U+mvp',
-                                    'linkwalker-ip',
-                                    os.getenv('IP_FILE')
-                                    )
+        # self.df = self.readCsvFromS3('AKIAIJ4PRNXZHJWOXQFA',
+        #                             'gV/RxdNoXK81jI58KSHZDRTn8sjorVIFb6+U+mvp',
+        #                             'linkwalker-ip',
+        #                             os.getenv('IP_FILE')
+        #                             )
+        self.df = pd.read_csv("myntra_parameters2.csv",header=None)
         self.domain = self.df.iat[1,3]
         self.page_range_start =int(self.df.iat[1,1])
         self.page_range_end =int(self.df.iat[1,2])

@@ -2,6 +2,7 @@ import scrapy
 from scrapy.spidermiddlewares.httperror import HttpError
 from twisted.internet.error import DNSLookupError
 from twisted.internet.error import TimeoutError, TCPTimedOutError
+from scrapy_selenium import SeleniumRequest
 
 
 class ArekereSpider(scrapy.Spider):
@@ -11,7 +12,7 @@ class ArekereSpider(scrapy.Spider):
     start_urls = ["https://www.swiggy.com/bangalore/arekere-restaurants"]
     custom_settings = {
         'FEED_FORMAT': 'csv',
-        'FEED_URI': 'arekere6.csv'
+        'FEED_URI': 'arekere7.csv'
     }
     def __init__(self):
         self.domain = "https://www.swiggy.com/bangalore/arekere-restaurants"
@@ -42,7 +43,6 @@ class ArekereSpider(scrapy.Spider):
             "full address":address,
             "cusine":cuisine,
             "fssai":fssai,
-            
         }
     # def middleware(self,response):
     #     self.page_no = 2
@@ -78,22 +78,34 @@ class ArekereSpider(scrapy.Spider):
             request = failure.request
             print("*********************************\n\n" + request + "\n\n")
             self.logger.error('TimeoutError on %s', request.url)
+    # def start_requests(self):
+    #     urls = self.urls
+    #     print("--------------------------------->URLS",urls)
+    #     for url in urls:
+    #         yield SeleniumRequest(
+    #             url=url, 
+    #             callback=self.parse_result,
+    #             wait_time=2,
+    #             # wait_before_scroll=1,
+    #             # infiniteScroll=True
+    #         )
         
-    def parse(self, response):
+    def start_requests(self,url,response):
         # print("***********************************")
         # places = response.xpath('//a[@class="_15mJL"]/@href').extract()
         # for place in places:
         #     place = place.split("/")[-1]
         #     place = '/' +  place 
         #     self.page_no = 2
-        #     yield scrapy.http.Request(url = response.urljoin(self.domain+place),callback = self.place_page)
+        #     yield scrapy.http.Request(url = response.urljoin(self.domain+place),callback = self.place_page)errback=self.errback_httpbin, dont_filter=False
         pagination = response.xpath('//a[@class="_1FZ7A"]').extract()
         pagination_last = response.xpath('//a[@class="_1FZ7A lh9t3"]').extract()
         
         if pagination or pagination_last:
             main_pages_of_restaurents = response.xpath('//a[@class="_1j_Yo"]/@href').extract()
             for main_page_of_restaurent in main_pages_of_restaurents:
-                yield scrapy.http.Request(url = self.domain2+main_page_of_restaurent,callback = self.save_restaurent_page, errback=self.errback_httpbin, dont_filter=False)
+                yield scrapy.http.Request(url = self.domain2+main_page_of_restaurent,callback = self.save_restaurent_page, )
+                # yield SeleniumRequest(url = self.domain + link, callback=self.save_restaurent_page)
             #print(main_pages_of_restaurents)
             link =''
             if "?page=" in response.url:
@@ -101,7 +113,7 @@ class ArekereSpider(scrapy.Spider):
             else:
                 link = response.url+"?page=1"
             self.page_no = self.page_no+1
-            yield scrapy.http.Request(url = response.urljoin(link),callback = self.parse)
+            yield SeleniumRequest(url = response.urljoin(link),callback = self.start_requests)
                   
     
         
