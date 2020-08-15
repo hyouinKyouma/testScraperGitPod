@@ -1,2 +1,2 @@
 super_link,page_range_start,page_range_end,domain,sub_link_xpath,product_name,product_brand,product_price,product_attributes
-https://www.myntra.com/men-tshirts?p=PAGE,1,2,https://www.myntra.com/,//li[@class='product-base']/a/@href,//h1[@class='pdp-name']/text(),//h1[@class='pdp-title']/text(),//span[@class='pdp-price']/strong/text(),//div[@class='index-rowValue']/text()
+https://www.myntra.com/men-tshirts?p=PAGE,1,3,https://www.myntra.com/,//li[@class='product-base']/a/@href,//h1[@class='pdp-name']/text(),//h1[@class='pdp-title']/text(),//span[@class='pdp-price']/strong/text(),//div[@class='index-rowValue']/text()

@@ -21,10 +21,10 @@ class Linkwalkerv3Spider(scrapy.Spider):
     #     'FEED_FORMAT':'csv',
     #     'FEED_URI':'s3://linkwalker-op/%s'%(os.getenv('OP_FILE'))
     # }
-    # custom_settings = {
-    #     'FEED_FORMAT': 'csv',
-    #     'FEED_URI': 'banaswadi.csv'
-    # }
+    custom_settings = {
+        'FEED_FORMAT': 'csv',
+        'FEED_URI': 'g2.csv'
+    }
     
     # custom_settings = {
     #     pathlib.Path('items.csv'): {
@@ -89,9 +89,8 @@ class Linkwalkerv3Spider(scrapy.Spider):
             yield SeleniumRequest(
                 url=url, 
                 callback=self.parse_result,
-                wait_time=2,
-                # wait_before_scroll=1,
-                # infiniteScroll=True
+                wait_before_scroll=1,
+                infiniteScroll=True
             )
 
     def __init__(self):
@@ -109,31 +108,36 @@ class Linkwalkerv3Spider(scrapy.Spider):
         self.urls = self.pageRangeSetter()        
 
     def parse_result(self, response):
-    
+        """
+        @url http://www.amazon.com/s?field-keywords=selfish+gene
+        @returns items 1 16
+        @returns requests 0 0
+        @scrapes Title Author Year Price
+
+        """
         # for getting sublinks
-        xpath_sublinks=self.df.iat[1,4]
-        sub_links = self.xptahExtractor(response,xpath_sublinks)
+        # xpath_sublinks=self.df.iat[1,4]
+        sub_links = response.xpath(self.df.iat[1,4]).extract()
+        # sub_links = self.xptahExtractor(response,xpath_sublinks)
         # print("sublinks--------",sub_links)
-        
-
         for link in sub_links:
-
             print('self.domain + link,=========>>',self.domain + link,)
-            yield SeleniumRequest(url = self.domain + link, 
-                                    callback=self.extractAttributes)
+            yield SeleniumRequest(url = self.domain + link, callback=self.extractAttributes, wait_time=20)
                                    
     def extractAttributes(self,response):
-        print("response headers====================================>>",response.request.meta['Firefox'].title)
+        # print("response headers====================================>>",response.request.meta['Firefox'].title)
+        print("====================================>>",response)
         MyDictionaryObj = dict()
-        for i in range(5,self.loop_range):
-            extracted_val = self.xptahExtractor(response,self.df.iat[1,i])
+        for i in range(6,self.loop_range):
+            # extracted_val = self.xptahExtractor(response,self.df.iat[1,i])
+            extracted_val = response.xpath(self.df.iat[1,i]).extract()
             if extracted_val == '':
                 self.logger.warning('No item received for 2nd iteration %s', response.url)
             print("extracted Val---------------->>>",extracted_val)
             header_op_csv= self.df.iat[0,i]
             MyDictionaryObj[header_op_csv] = extracted_val
-            # print("=============================================>",MyDictionaryObj)    
-        yield MyDictionaryObj 
+            print("=============================================>",MyDictionaryObj)    
+        yield MyDictionaryObj
 
 
 
